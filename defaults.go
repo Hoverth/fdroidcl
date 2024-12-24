@@ -4,9 +4,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/pelletier/go-toml/v2"
 )
 
 var cmdDefaults = &Command{
@@ -26,7 +27,7 @@ func runDefaults(args []string) error {
 }
 
 func writeConfig(c *userConfig) error {
-	b, err := json.MarshalIndent(c, "", "\t")
+	b, err := toml.Marshal(c)
 	if err != nil {
 		return fmt.Errorf("cannot encode config: %v", err)
 	}

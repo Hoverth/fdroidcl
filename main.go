@@ -4,12 +4,13 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/pelletier/go-toml/v2"
 )
 
 const cmdName = "fdroidcl"
@@ -43,17 +44,24 @@ func mustData() string {
 }
 
 func configPath() string {
-	return filepath.Join(mustData(), "config.json")
+	return filepath.Join(mustData(), "config.toml")
 }
 
 type repo struct {
-	ID      string `json:"id"`
-	URL     string `json:"url"`
-	Enabled bool   `json:"enabled"`
+	ID      string `toml:"id"`
+	URL     string `toml:"url"`
+	Enabled bool   `toml:"enabled"`
+}
+
+type setup struct {
+	ID    string   `toml:"id"`
+	Apps  []string `toml:"apps"`
+	Repos []string `toml:"repos"`
 }
 
 type userConfig struct {
-	Repos []repo `json:"repos"`
+	Repos  []repo  `toml:"repos"`
+	Setups []setup `toml:"setups"`
 }
 
 var config = userConfig{
@@ -69,6 +77,7 @@ var config = userConfig{
 			Enabled: false,
 		},
 	},
+	Setups: []setup{},
 }
 
 func readConfig() error {
@@ -79,7 +88,7 @@ func readConfig() error {
 	}
 	defer f.Close()
 	fileConfig := userConfig{}
-	err = json.NewDecoder(f).Decode(&fileConfig)
+	err = toml.NewDecoder(f).Decode(&fileConfig)
 	if err != nil {
 		return err
 	}
@@ -168,8 +177,10 @@ var commands = []*Command{
 	cmdUninstall,
 	cmdDownload,
 	cmdDevices,
+	cmdScan,
 	cmdList,
 	cmdRepo,
+	cmdSetup,
 	cmdClean,
 	cmdDefaults,
 	cmdVersion,

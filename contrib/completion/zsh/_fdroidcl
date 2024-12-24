@@ -8,9 +8,12 @@ _fdroidcl() {
   'show:show detailed info about an app'
   'list:list all known values of a kind'
   'devices:list connected devices'
+  'scan:list all fdroid apps on a device'
   'download:download an app'
   'install:install or upgrade an app'
   'uninstall:uninstall an app'
+  'setup:manage setups'
+  'repo:manage repos'
   'defaults:reset to the default settings')
 
   _arguments \
