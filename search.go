@@ -27,6 +27,7 @@ var (
 	searchUpdates   = cmdSearch.Fset.Bool("u", false, "Filter apps with updates")
 	searchDays      = cmdSearch.Fset.Int("d", 0, "Select apps last updated in the last <n> days; a negative value drops them instead")
 	searchCategory  = cmdSearch.Fset.String("c", "", "Filter apps by category")
+	searchRepo      = cmdSearch.Fset.String("r", "", "Filter apps by repository")
 	searchSortBy    = cmdSearch.Fset.String("o", "", "Sort order (added, updated)")
 	searchUser      = cmdSearch.Fset.String("user", "all", "Filter installed apps by user <USER_ID|current|all>")
 )
@@ -47,10 +48,18 @@ func runSearch(args []string) error {
 	if err != nil {
 		return err
 	}
-	if len(apps) > 0 && *searchCategory != "" {
-		apps = filterAppsCategory(apps, *searchCategory)
-		if apps == nil {
-			return fmt.Errorf("no such category: %s", *searchCategory)
+	if len(apps) > 0 {
+		if *searchCategory != "" {
+			apps = filterAppsCategory(apps, *searchCategory)
+			if apps == nil {
+				return fmt.Errorf("no such category: %s", *searchCategory)
+			}
+		}
+		if *searchRepo != "" {
+			apps = filterAppsRepo(apps, *searchRepo)
+			if apps == nil {
+				return fmt.Errorf("no such repository: %s", *searchRepo)
+			}
 		}
 	}
 	if len(apps) > 0 && len(args) > 0 {
@@ -261,6 +270,17 @@ func contains(l []string, s string) bool {
 		}
 	}
 	return false
+}
+
+func filterAppsRepo(apps []fdroid.App, repo string) []fdroid.App {
+	var result []fdroid.App
+	for _, app := range apps {
+		if app.FdroidRepoName != repo {
+			continue
+		}
+		result = append(result, app)
+	}
+	return result
 }
 
 func filterAppsCategory(apps []fdroid.App, categ string) []fdroid.App {
