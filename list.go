@@ -13,7 +13,7 @@ import (
 )
 
 var cmdList = &Command{
-	UsageLine: "list (categories/users)",
+	UsageLine: "list (categories/users/repos)",
 	Short:     "List all known values of a kind",
 }
 
@@ -40,6 +40,10 @@ func runList(args []string) error {
 	case "users":
 		if err := listUsers(); err != nil {
 			return err
+		}
+	case "repos":
+		for _, app := range apps {
+			values[app.FdroidRepoName] = struct{}{}
 		}
 	default:
 		return fmt.Errorf("invalid argument")
