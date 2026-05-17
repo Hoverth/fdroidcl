@@ -15,7 +15,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	if os.Getenv("TESTSCRIPT_COMMAND") == "" {
+	if filepath.Base(os.Args[0]) != "fdroidcl" {
 		// start the static http server once
 		path := filepath.Join("testdata", "staticrepo")
 		fs := http.FileServer(http.Dir(path))

@@ -14,4 +14,4 @@ fdroidcl show org.pocketworkstation.pckeyboard info.metadude.android.bitsundbaeu
 ! stdout '&apos'
 ! stdout '&amp'
 stdout 'Name.*Hacker''s Keyboard'
-stdout 'Version.*Bits-und-Baeume'
+stdout 'Version.*Bits & Bäume'
